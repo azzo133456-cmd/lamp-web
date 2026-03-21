@@ -39,6 +39,10 @@ function showLamp(id) {
 
 // 🔥🔥🔥 搜尋功能（你之前缺這個）
 function searchLamp() {
-  console.log("searchLamp 被呼叫了");
-  alert("searchLamp 被呼叫了");
+  const id = document.getElementById("lampInput").value.trim();
+  if (!id) {
+    alert("請輸入路燈編號");
+    return;
+  }
+  showLamp(id);
 }
