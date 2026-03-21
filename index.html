@@ -1,44 +1,35 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <title>路燈查詢系統</title>
-  <style>
-    body { font-family: Arial; padding: 20px; }
-    input { padding: 8px; width: 200px; }
-    button { padding: 8px 12px; }
-    #result { margin-top: 20px; }
-  </style>
+  <meta charset="UTF-8" />
+  <title>路燈查詢地圖</title>
+
+  <!-- Leaflet CSS -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  />
+
+  <!-- 自己的 CSS -->
+  <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
 
-  <h2>路燈編號查詢</h2>
+  <!-- 未來 UI 區域（搜尋框、按鈕都可以放這裡） -->
+  <div id="ui">
+    <input id="lampInput" type="text" placeholder="輸入路燈編號，例如 0400001">
+    <button onclick="searchLamp()">查詢</button>
+  </div>
 
-  <input id="lampId" placeholder="請輸入路燈編號">
-  <button onclick="searchLamp()">查詢</button>
+  <!-- 地圖容器 -->
+  <div id="map"></div>
 
-  <div id="result"></div>
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-  <script>
-const API = "https://lamp-api-bc33.onrender.com";
-
-async function searchLamp() {
-  const id = document.getElementById("lampId").value;
-  const res = await fetch(`${API}/lamp/${id}`);
-  const data = await res.json();
-
-      if (data.error) {
-        document.getElementById("result").innerHTML = "<p>❌ 查無資料</p>";
-        return;
-      }
-
-      document.getElementById("result").innerHTML = `
-        <p>📍 地址：${data.address}</p>
-        <p>🌐 座標：${data.lat}, ${data.lng}</p>
-        <a href="${data.nav}" target="_blank">🚗 Google Maps 導航</a>
-      `;
-    }
-  </script>
+  <!-- 自己的 JS -->
+  <script src="map.js"></script>
 
 </body>
 </html>
