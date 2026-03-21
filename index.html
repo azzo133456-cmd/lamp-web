@@ -16,16 +16,23 @@
 
 <body>
 
- <!-- 搜尋 UI -->
+<!-- 上方搜尋 UI -->
   <div id="ui">
-    <input id="lampInput" type="text" placeholder="輸入路燈編號，例如 0400001">
+    <input id="lampInput" type="text" placeholder="輸入路燈編號">
     <button onclick="searchLamp()">查詢</button>
   </div>
 
-  <!-- 地圖 -->
-  <div id="map"></div>
+  <!-- 地圖容器（不滿版） -->
+  <div id="mapContainer">
+    <div id="map"></div>
+  </div>
 
-  <!-- 📍 浮動定位按鈕 -->
+  <!-- 預留廣告區 -->
+  <div id="adArea">
+    <p>這裡可以放廣告、公告、Logo、Banner</p>
+  </div>
+
+  <!-- 定位按鈕 -->
   <button id="locateBtn" onclick="locateUser()">📍</button>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
