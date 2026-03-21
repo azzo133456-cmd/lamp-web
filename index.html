@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>路燈查詢系統</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    input { padding: 8px; width: 200px; }
+    button { padding: 8px 12px; }
+    #result { margin-top: 20px; }
+  </style>
+</head>
+<body>
+
+  <h2>路燈編號查詢</h2>
+
+  <input id="lampId" placeholder="請輸入路燈編號">
+  <button onclick="searchLamp()">查詢</button>
+
+  <div id="result"></div>
+
+  <script>
+    async function searchLamp() {
+      const id = document.getElementById("lampId").value;
+      const res = await fetch(`http://localhost:3000/lamp/${id}`);
+      const data = await res.json();
+
+      if (data.error) {
+        document.getElementById("result").innerHTML = "<p>❌ 查無資料</p>";
+        return;
+      }
+
+      document.getElementById("result").innerHTML = `
+        <p>📍 地址：${data.address}</p>
+        <p>🌐 座標：${data.lat}, ${data.lng}</p>
+        <a href="${data.nav}" target="_blank">🚗 Google Maps 導航</a>
+      `;
+    }
+  </script>
+
+</body>
+</html>
