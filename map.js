@@ -6,7 +6,7 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution: "© OpenStreetMap"
 }).addTo(map);
 
-// 🔥 用來記錄目前的 marker
+// 🔥 用來記錄目前的 marker（只保留最新一個）
 let currentMarker = null;
 
 // 顯示某個路燈
@@ -23,7 +23,7 @@ function showLamp(id) {
       const lat = Number(data.lng); // 緯度（24.xxx）
       const lng = Number(data.lat); // 經度（121.xxx）
 
-      // 🔥 清除舊 marker
+      // 清除舊 marker
       if (currentMarker) {
         map.removeLayer(currentMarker);
       }
@@ -39,14 +39,10 @@ function showLamp(id) {
 
       map.setView([lat, lng], 18);
       currentMarker.openPopup();
-    })
-    .catch(err => {
-      console.error(err);
-      alert("API 錯誤");
     });
 }
 
-// 🔥 搜尋功能
+// 搜尋功能
 function searchLamp() {
   const input = document.getElementById("lampInput");
   const id = input.value.trim();
@@ -57,14 +53,62 @@ function searchLamp() {
   }
 
   showLamp(id);
-
-  // 🔥 查詢後自動清空輸入框
-  input.value = "";
+  input.value = ""; // 查詢後清空
 }
 
-// 🔥 按 Enter 也能查詢
+// 🔥 Enter 也能查詢
 document.getElementById("lampInput").addEventListener("keydown", function (e) {
   if (e.key === "Enter") {
     searchLamp();
   }
 });
+
+// ------------------------------------------------------
+// 🔥🔥🔥 自動定位使用者位置 + 找最近路燈
+// ------------------------------------------------------
+
+function locateUser() {
+  if (!navigator.geolocation) {
+    alert("此瀏覽器不支援定位功能");
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    async (pos) => {
+      const userLat = pos.coords.latitude;
+      const userLng = pos.coords.longitude;
+
+      // 清除舊 marker
+      if (currentMarker) {
+        map.removeLayer(currentMarker);
+      }
+
+      // 使用者位置 marker（藍色）
+      currentMarker = L.marker([userLat, userLng], {
+        icon: L.icon({
+          iconUrl: "https://maps.gstatic.com/mapfiles/ms2/micons/blue-dot.png",
+          iconSize: [32, 32]
+        })
+      }).addTo(map);
+
+      currentMarker.bindPopup("你在這裡").openPopup();
+      map.setView([userLat, userLng], 16);
+
+      // 🔥 找最近的路燈
+      const nearest = await findNearestLamp(userLat, userLng);
+      if (nearest) {
+        showLamp(nearest.id);
+      }
+    },
+    () => {
+      alert("無法取得定位資訊");
+    }
+  );
+}
+
+// 🔥 從 API 找最近的路燈
+async function findNearestLamp(lat, lng) {
+  const res = await fetch(`https://lamp-api-bc33.onrender.com/nearest?lat=${lat}&lng=${lng}`);
+  const data = await res.json();
+  return data; // { id: "0400001", distance: ... }
+}
