@@ -26,9 +26,8 @@ function showLamp(id) {
         return;
       }
 
-      // API 的 lat 是經度，lng 是緯度 → 交換
-      const lat = Number(data.lng); // 緯度（24.xxx）
-      const lng = Number(data.lat); // 經度（121.xxx）
+      const lat = Number(data.lng); // 緯度
+      const lng = Number(data.lat); // 經度
 
       // 清除舊 marker
       if (currentMarker) {
@@ -44,8 +43,17 @@ function showLamp(id) {
         <a href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}" target="_blank">導航</a>
       `);
 
-      map.setView([lat, lng], 18);
-      currentMarker.openPopup();
+      // 🔥🔥🔥 讓 marker 置中（並避開上方 UI）
+      const targetPoint = map.latLngToContainerPoint([lat, lng]);
+      const offsetPoint = L.point(targetPoint.x, targetPoint.y - 120); // 往上偏移 120px
+      const targetLatLng = map.containerPointToLatLng(offsetPoint);
+
+      map.panTo(targetLatLng, {
+        animate: true,
+        duration: 0.8
+      });
+
+      setTimeout(() => currentMarker.openPopup(), 900);
     });
 }
 
@@ -98,12 +106,40 @@ function locateUser() {
         })
       }).addTo(map);
 
-      currentMarker.bindPopup("你在這裡").openPopup();
-      map.setView([userLat, userLng], 16);
+      currentMarker.bindPopup("你在這裡");
 
-      // 🔥 找最近的路燈
+      // ----------------------------------------------------
+      // 🔥 讓定位點置中（並避開上方 UI）
+      // ----------------------------------------------------
+      const targetPoint = map.latLngToContainerPoint([userLat, userLng]);
+
+      // iPhone 14 Pro Max 上方 UI + safe-area 大約 120~150px
+      const offsetY = 140;
+
+      const offsetPoint = L.point(targetPoint.x, targetPoint.y - offsetY);
+      const targetLatLng = map.containerPointToLatLng(offsetPoint);
+
+      map.panTo(targetLatLng, {
+        animate: true,
+        duration: 0.8
+      });
+
+      setTimeout(() => currentMarker.openPopup(), 900);
+
+      // ----------------------------------------------------
+      // 🔥 找最近路燈（你的後端已經支援）
+      // ----------------------------------------------------
       const nearest = await findNearestLamp(userLat, userLng);
+
       if (nearest) {
+        const dist = nearest.distance * 1000; // km → 公尺
+
+        if (dist <= 50) {
+          alert(`最近的路燈距離你約 ${Math.round(dist)} 公尺`);
+        } else {
+          alert(`最近的路燈超過 50 公尺（約 ${Math.round(dist)} 公尺）`);
+        }
+
         showLamp(nearest.id);
       }
     },
