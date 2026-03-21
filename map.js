@@ -155,3 +155,7 @@ async function findNearestLamp(lat, lng) {
   const data = await res.json();
   return data; // { id: "0400001", distance: ... }
 }
+
+setTimeout(() => {
+  map.invalidateSize();
+}, 500);
