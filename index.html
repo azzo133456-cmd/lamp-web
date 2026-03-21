@@ -20,10 +20,12 @@
   <div id="result"></div>
 
   <script>
-    async function searchLamp() {
-      const id = document.getElementById("lampId").value;
-      const res = await fetch(`http://localhost:3000/lamp/${id}`);
-      const data = await res.json();
+const API = "https://lamp-api.onrender.com";
+
+async function searchLamp() {
+  const id = document.getElementById("lampId").value;
+  const res = await fetch(`${API}/lamp/${id}`);
+  const data = await res.json();
 
       if (data.error) {
         document.getElementById("result").innerHTML = "<p>❌ 查無資料</p>";
