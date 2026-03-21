@@ -16,22 +16,20 @@
 
 <body>
 
-  <!-- 未來 UI 區域（搜尋框、按鈕都可以放這裡） -->
+ <!-- 搜尋 UI -->
   <div id="ui">
     <input id="lampInput" type="text" placeholder="輸入路燈編號，例如 0400001">
     <button onclick="searchLamp()">查詢</button>
   </div>
 
-  <!-- 地圖容器 -->
+  <!-- 地圖 -->
   <div id="map"></div>
 
-  <!-- Leaflet JS -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-  <!-- 自己的 JS -->
-  <script src="map.js"></script>
-
+  <!-- 📍 浮動定位按鈕 -->
   <button id="locateBtn" onclick="locateUser()">📍</button>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="map.js"></script>
 
 </body>
 </html>
