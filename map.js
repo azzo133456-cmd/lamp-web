@@ -1,5 +1,12 @@
 // 初始化地圖
-const map = L.map("map").setView([25.033, 121.565], 12);
+const map = L.map("map", {
+  zoomControl: false   // 先關掉預設的右上角縮放按鈕
+}).setView([25.033, 121.565], 12);
+
+// 把縮放控制放到左下角
+L.control.zoom({
+  position: "bottomleft"
+}).addTo(map);
 
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 19,
