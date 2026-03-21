@@ -23,7 +23,7 @@ function showLamp(id) {
       const lat = Number(data.lng); // 緯度（24.xxx）
       const lng = Number(data.lat); // 經度（121.xxx）
 
-      // 🔥 清除舊的 marker
+      // 🔥 清除舊 marker
       if (currentMarker) {
         map.removeLayer(currentMarker);
       }
@@ -46,12 +46,25 @@ function showLamp(id) {
     });
 }
 
-// 搜尋功能
+// 🔥 搜尋功能
 function searchLamp() {
-  const id = document.getElementById("lampInput").value.trim();
+  const input = document.getElementById("lampInput");
+  const id = input.value.trim();
+
   if (!id) {
     alert("請輸入路燈編號");
     return;
   }
+
   showLamp(id);
+
+  // 🔥 查詢後自動清空輸入框
+  input.value = "";
 }
+
+// 🔥 按 Enter 也能查詢
+document.getElementById("lampInput").addEventListener("keydown", function (e) {
+  if (e.key === "Enter") {
+    searchLamp();
+  }
+});
