@@ -16,7 +16,7 @@ function showLamp(id) {
         return;
       }
 
-      // 這裡是關鍵：API 的 lat 是經度，lng 是緯度
+      // 🔥 API 的 lat 是經度，lng 是緯度 → 這裡交換
       const lat = Number(data.lng); // 緯度（24.xxx）
       const lng = Number(data.lat); // 經度（121.xxx）
 
@@ -30,33 +30,19 @@ function showLamp(id) {
 
       map.setView([lat, lng], 18);
       marker.openPopup();
+    })
+    .catch(err => {
+      console.error(err);
+      alert("API 錯誤");
     });
 }
 
-// 正常放 marker
-function placeMarker(lat, lng, data) {
-  const marker = L.marker([lat, lng]).addTo(map);
-
-  marker.bindPopup(`
-    <b>路燈編號：</b>${data.id}<br>
-    <b>地址：</b>${data.address}<br>
-    <a href="${data.nav}" target="_blank">導航</a>
-  `);
-
-  map.setView([lat, lng], 18);
-  marker.openPopup();
-}
-
-// 自動修正經緯度反轉
-function showFixedLamp(lat, lng, data) {
-  const marker = L.marker([lat, lng]).addTo(map);
-
-  marker.bindPopup(`
-    <b>路燈編號：</b>${data.id}<br>
-    <b>地址：</b>${data.address}<br>
-    <a href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}" target="_blank">導航</a>
-  `);
-
-  map.setView([lat, lng], 18);
-  marker.openPopup();
+// 🔥🔥🔥 搜尋功能（你之前缺這個）
+function searchLamp() {
+  const id = document.getElementById("lampInput").value.trim();
+  if (!id) {
+    alert("請輸入路燈編號");
+    return;
+  }
+  showLamp(id);
 }
