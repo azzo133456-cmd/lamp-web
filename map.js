@@ -16,8 +16,8 @@ function showLamp(id) {
         return;
       }
 
-      const lat = data.lat;
-      const lng = data.lng;
+      const lat = Number(data.lat);
+      const lng = Number(data.lng);
 
       const marker = L.marker([lat, lng]).addTo(map);
 
