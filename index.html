@@ -4,21 +4,18 @@
   <meta charset="UTF-8" />
   <title>路燈查詢地圖</title>
 
+<meta name="google-adsense-account" content="ca-pub-4403695228861827">
+  
   <!-- Leaflet CSS -->
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
-  <!-- 自己的 CSS -->
   <link rel="stylesheet" href="style.css" />
 
-  <!-- AdSense 啟用碼 -->
+  <!-- AdSense -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4403695228861827"
      crossorigin="anonymous"></script>
 
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  
 </head>
 
 <body>
@@ -29,16 +26,18 @@
     <button onclick="searchLamp()">查詢</button>
   </div>
 
-  <!-- 地圖容器（中間區域） -->
+  <!-- 地圖容器（高度自動計算） -->
   <div id="mapContainer">
-  <div id="map"></div>
-  <button id="locateBtn" onclick="locateUser()">📍</button>
-</div>
+    <div id="map"></div>
 
-  <!-- 底部廣告區（唯一一個） -->
+    <!-- 唯一定位按鈕 -->
+    <button id="locateBtn" onclick="locateUser()">📍</button>
+  </div>
+
+  <!-- 底部廣告 -->
   <div id="adArea">
     <ins class="adsbygoogle"
-         style="display:block;width:100%;height:100%;"
+         style="display:block;width:100%;height:90px;"
          data-ad-client="ca-pub-4403695228861827"
          data-ad-slot="8678362216"
          data-ad-format="auto"
@@ -49,11 +48,34 @@
     </script>
   </div>
 
-  <!-- 定位按鈕 -->
-  <button id="locateBtn" onclick="locateUser()">📍</button>
-
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- 自動高度計算（直立模式專用） -->
+  <script>
+    function resizeMap() {
+      const ui = document.getElementById("ui");
+      const ad = document.getElementById("adArea");
+      const mapContainer = document.getElementById("mapContainer");
+
+      const uiH = ui.offsetHeight;
+      const adH = ad.offsetHeight;
+      const vh = window.innerHeight;
+
+      mapContainer.style.height = (vh - uiH - adH) + "px";
+
+      if (window.map) {
+        setTimeout(() => map.invalidateSize(), 200);
+      }
+    }
+
+    window.addEventListener("load", resizeMap);
+    window.addEventListener("resize", resizeMap);
+
+    // 廣告載入後再調整一次
+    setTimeout(resizeMap, 800);
+  </script>
+
   <script src="map.js"></script>
 
 </body>
