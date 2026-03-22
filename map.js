@@ -1,6 +1,8 @@
-// 初始化地圖
+// ------------------------------------------------------
+// 🌍 初始化地圖
+// ------------------------------------------------------
 const map = L.map("map", {
-  zoomControl: false   // 先關掉預設的右上角縮放按鈕
+  zoomControl: false
 }).setView([25.033, 121.565], 12);
 
 // 把縮放控制放到左下角
@@ -16,9 +18,16 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 // 🔥 用來記錄目前的 marker（只保留最新一個）
 let currentMarker = null;
 
-// 顯示某個路燈
+// ------------------------------------------------------
+// 🔥 你的正式 API 網域（Railway）
+// ------------------------------------------------------
+const API_BASE = "https://api.azzo133456.page";
+
+// ------------------------------------------------------
+// 🔥 顯示某個路燈
+// ------------------------------------------------------
 function showLamp(id) {
-  fetch(`https://lamp-api-bc33.onrender.com/lamp/${id}`)
+  fetch(`${API_BASE}/lamp/${encodeURIComponent(id)}`)
     .then(res => res.json())
     .then(data => {
       if (data.error) {
@@ -26,8 +35,9 @@ function showLamp(id) {
         return;
       }
 
-      const lat = Number(data.lng); // 緯度
-      const lng = Number(data.lat); // 經度
+      // ⭐ 你的 DB 格式：lat=經度, lng=緯度 → 這裡已修正
+      const lat = Number(data.lat); // 緯度
+      const lng = Number(data.lng); // 經度
 
       // 清除舊 marker
       if (currentMarker) {
@@ -40,18 +50,20 @@ function showLamp(id) {
       currentMarker.bindPopup(`
         <b>路燈編號：</b>${data.id}<br>
         <b>地址：</b>${data.address}<br>
-        <a href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}" target="_blank">導航</a>
+        <a href="${data.nav}" target="_blank">導航</a>
       `);
 
-      // ⭐⭐⭐ 直接瞬間跳到 marker（不偏移、不動畫）
+      // ⭐⭐⭐ 直接瞬間跳到 marker
       map.setView([lat, lng], 18);
 
-      // 開啟 popup
       setTimeout(() => currentMarker.openPopup(), 300);
-    });
+    })
+    .catch(() => alert("API 連線失敗"));
 }
 
-// 搜尋功能
+// ------------------------------------------------------
+// 🔍 搜尋功能
+// ------------------------------------------------------
 function searchLamp() {
   const input = document.getElementById("lampInput");
   const id = input.value.trim();
@@ -62,7 +74,7 @@ function searchLamp() {
   }
 
   showLamp(id);
-  input.value = ""; // 查詢後清空
+  input.value = "";
 }
 
 // 🔥 Enter 也能查詢
@@ -73,9 +85,8 @@ document.getElementById("lampInput").addEventListener("keydown", function (e) {
 });
 
 // ------------------------------------------------------
-// 🔥🔥🔥 自動定位使用者位置 + 找最近路燈
+// 📍 自動定位 + 找最近路燈
 // ------------------------------------------------------
-
 function locateUser() {
   if (!navigator.geolocation) {
     alert("此瀏覽器不支援定位功能");
@@ -102,26 +113,20 @@ function locateUser() {
 
       currentMarker.bindPopup("你在這裡");
 
-      // ⭐⭐⭐ 直接瞬間跳到定位點（不偏移、不動畫）
       map.setView([userLat, userLng], 18);
-
       setTimeout(() => currentMarker.openPopup(), 300);
 
       // ----------------------------------------------------
-      // 🔥 找最近路燈（你的後端已經支援）
+      // 🔥 找最近路燈（你的 Railway API）
       // ----------------------------------------------------
       const nearest = await findNearestLamp(userLat, userLng);
 
-      if (nearest) {
+      if (nearest && nearest.id) {
         const dist = nearest.distance * 1000; // km → 公尺
 
-        if (dist <= 50) {
-          alert(`最近的路燈距離你約 ${Math.round(dist)} 公尺`);
-        } else {
-          alert(`最近的路燈超過 50 公尺（約 ${Math.round(dist)} 公尺）`);
-        }
+        alert(`最近的路燈距離你約 ${Math.round(dist)} 公尺`);
 
-        // ⭐ 再瞬間跳到最近路燈
+        // ⭐ 再跳到最近路燈
         showLamp(nearest.id);
       }
     },
@@ -131,13 +136,17 @@ function locateUser() {
   );
 }
 
+// ------------------------------------------------------
 // 🔥 從 API 找最近的路燈
+// ------------------------------------------------------
 async function findNearestLamp(lat, lng) {
-  const res = await fetch(`https://lamp-api-bc33.onrender.com/nearest?lat=${lat}&lng=${lng}`);
-  const data = await res.json();
-  return data; // { id: "0400001", distance: ... }
+  const res = await fetch(`${API_BASE}/nearest?lat=${lat}&lng=${lng}`);
+  return await res.json();
 }
 
+// ------------------------------------------------------
+// 修正 Leaflet 在 mobile 初次載入時地圖尺寸錯誤
+// ------------------------------------------------------
 setTimeout(() => {
   map.invalidateSize();
 }, 500);
