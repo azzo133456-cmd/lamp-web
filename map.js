@@ -35,8 +35,8 @@ function showLamp(id) {
       }
 
       // ⭐ 正確 lat/lng（你的 DB 是 lat=經度, lng=緯度）
-      const lat = Number(data.lng); // 緯度
-      const lng = Number(data.lat); // 經度
+      const lat = Number(data.lat); // 緯度
+      const lng = Number(data.lng); // 經度
 
       if (currentMarker) map.removeLayer(currentMarker);
 
