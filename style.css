@@ -77,8 +77,8 @@ html, body {
 
 /* 📍 定位按鈕 */
 #locateBtn {
-  position: fixed;
-  bottom: calc(120px + 20px + env(safe-area-inset-bottom));
+  position: absolute;
+  bottom: 20px;
   right: 20px;
   width: 58px;
   height: 58px;
