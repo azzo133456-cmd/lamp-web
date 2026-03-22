@@ -102,23 +102,10 @@ function locateUser() {
 
       currentMarker.bindPopup("你在這裡");
 
-      // ----------------------------------------------------
-      // 🔥 讓定位點置中（並避開上方 UI）
-      // ----------------------------------------------------
-      const targetPoint = map.latLngToContainerPoint([userLat, userLng]);
+      // ⭐⭐⭐ 直接瞬間跳到定位點（不偏移、不動畫）
+      map.setView([userLat, userLng], 18);
 
-      // iPhone 14 Pro Max 上方 UI + safe-area 大約 120~150px
-      const offsetY = 140;
-
-      const offsetPoint = L.point(targetPoint.x, targetPoint.y - offsetY);
-      const targetLatLng = map.containerPointToLatLng(offsetPoint);
-
-      map.panTo(targetLatLng, {
-        animate: true,
-        duration: 0.8
-      });
-
-      setTimeout(() => currentMarker.openPopup(), 900);
+      setTimeout(() => currentMarker.openPopup(), 300);
 
       // ----------------------------------------------------
       // 🔥 找最近路燈（你的後端已經支援）
@@ -134,6 +121,7 @@ function locateUser() {
           alert(`最近的路燈超過 50 公尺（約 ${Math.round(dist)} 公尺）`);
         }
 
+        // ⭐ 再瞬間跳到最近路燈
         showLamp(nearest.id);
       }
     },
