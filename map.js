@@ -24,7 +24,7 @@ const API_BASE = "https://api.azzo133456.page";
 // 🔥 顯示某個路燈
 // ------------------------------------------------------
 function showLamp(id) {
-  fetch(`https://api.azzo133456.page/lamp/${encodeURIComponent(id)}`, {
+  fetch(`https://api.azzo133456.page/lamp/${id}`, {
     cache: "no-store"
   })
     .then(res => res.json())
