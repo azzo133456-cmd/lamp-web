@@ -43,17 +43,11 @@ function showLamp(id) {
         <a href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}" target="_blank">導航</a>
       `);
 
-      // 🔥🔥🔥 讓 marker 置中（並避開上方 UI）
-      const targetPoint = map.latLngToContainerPoint([lat, lng]);
-      const offsetPoint = L.point(targetPoint.x, targetPoint.y - 120); // 往上偏移 120px
-      const targetLatLng = map.containerPointToLatLng(offsetPoint);
+      // ⭐⭐⭐ 直接瞬間跳到 marker（不偏移、不動畫）
+      map.setView([lat, lng], 18);
 
-      map.panTo(targetLatLng, {
-        animate: true,
-        duration: 0.8
-      });
-
-      setTimeout(() => currentMarker.openPopup(), 900);
+      // 開啟 popup
+      setTimeout(() => currentMarker.openPopup(), 300);
     });
 }
 
